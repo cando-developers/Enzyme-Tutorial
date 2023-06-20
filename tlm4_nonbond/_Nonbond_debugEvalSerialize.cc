@@ -1,0 +1,49 @@
+// XML_EVAL
+	node->attributeIfNotDefault("eval2.8", this->eval.2.8, 0.0 );
+ 	node->attributeIfNotDefault("eval0.", this->eval.0., 0.0 );
+ 	node->attributeIfNotDefault("eval0.", this->eval.0., 0.0 );
+ 	node->attributeIfNotDefault("eval-2.9", this->eval.-2.9, 0.0 );
+ 	node->attributeIfNotDefault("eval0.", this->eval.0., 0.0 );
+ 	node->attributeIfNotDefault("eval0.", this->eval.0., 0.0 );
+ 	node->attributeIfNotDefault("eval        12
+3.156 10", this->eval.        12
+3.156 10, 0.0 );
+ 	node->attributeIfNotDefault("eval          6
+1.73651 10", this->eval.          6
+1.73651 10, 0.0 );
+ 	node->attributeIfNotDefault("eval0.", this->eval.0., 0.0 );
+ 	node->attributeIfNotDefault("evalDeltaX", this->eval.DeltaX, 0.0 );
+ 	node->attributeIfNotDefault("evalDeltaY", this->eval.DeltaY, 0.0 );
+ 	node->attributeIfNotDefault("evalDeltaZ", this->eval.DeltaZ, 0.0 );
+ 	node->attributeIfNotDefault("evalEnergy", this->eval.Energy, 0.0 );
+ 	node->attributeIfNotDefault("evalEvdw", this->eval.Evdw, 0.0 );
+ 	node->attributeIfNotDefault("evalEeel", this->eval.Eeel, 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f2.8]", this->eval.Symbol[f2.8], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f0.]", this->eval.Symbol[f0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f0.]", this->eval.Symbol[f0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f-2.9]", this->eval.Symbol[f-2.9], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f0.]", this->eval.Symbol[f0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[f0.]", this->eval.Symbol[f0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh2.82.8]", this->eval.Symbol[dh2.82.8], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh0.0.]", this->eval.Symbol[dh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh0.0.]", this->eval.Symbol[dh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh-2.9-2.9]", this->eval.Symbol[dh-2.9-2.9], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh0.0.]", this->eval.Symbol[dh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[dh0.0.]", this->eval.Symbol[dh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh2.80.]", this->eval.Symbol[oh2.80.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh2.80.]", this->eval.Symbol[oh2.80.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh2.8-2.9]", this->eval.Symbol[oh2.8-2.9], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh2.80.]", this->eval.Symbol[oh2.80.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh2.80.]", this->eval.Symbol[oh2.80.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.-2.9]", this->eval.Symbol[oh0.-2.9], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.-2.9]", this->eval.Symbol[oh0.-2.9], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh-2.90.]", this->eval.Symbol[oh-2.90.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh-2.90.]", this->eval.Symbol[oh-2.90.], 0.0 );
+ 	node->attributeIfNotDefault("evalSymbol[oh0.0.]", this->eval.Symbol[oh0.0.], 0.0 );
+ 	node->attributeIfNotDefault("evalNonbondDistance", this->eval.NonbondDistance, 0.0 );
+ 

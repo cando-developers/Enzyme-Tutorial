@@ -1,0 +1,19 @@
+// DEFINE_EVAL
+	struct {
+	double	x1;
+	double	y1;
+	double	z1;
+	double	x2;
+	double	y2;
+	double	z2;
+	double	dA;
+	double	dC;
+	double	dQ1Q2;
+	double	DeltaX;
+	double	DeltaY;
+	double	DeltaZ;
+	double	Energy;
+	double	Evdw;
+	double	Eeel;
+	double	NonbondDistance;
+	} eval;
