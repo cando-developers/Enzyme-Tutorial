@@ -7,10 +7,10 @@
 #define MIN(XXX,YYY) ((XXX<YYY)?XXX:YYY)
 #define MAX(XXX,YYY) ((XXX<YYY)?YYY:XXX)
 
-void	sinNPhiCosNPhi(int n, double* sinNPhi, double* cosNPhi,
-                       double sinPhi, double cosPhi )
+void	sinNPhiCosNPhi(int n, float* sinNPhi, float* cosNPhi,
+                       float sinPhi, float cosPhi )
 {
-  double	sinNm1Phi, cosNm1Phi;
+  float	sinNm1Phi, cosNm1Phi;
   if ( n==1 ) {
     *sinNPhi = sinPhi;
     *cosNPhi = cosPhi;
@@ -32,7 +32,7 @@ struct Dihedral {
   float cosPhase;
   float V;
   float DN;
-  float IN;
+  int   IN;
   int   I1;
   int   I2;
   int   I3;
@@ -90,10 +90,37 @@ float dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* p
 }
 
 void grad_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* pos, float* deriv ) {
-  __enzyme_autodiff( (void*)stretch_energy,
+  __enzyme_autodiff( (void*)dihedral_energy,
                      enzyme_const, dihedral_begin,
                      enzyme_const, dihedral_end,
                      enzyme_dup, pos, deriv );
+}
+
+void finite_diff_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* pos, float* deriv)
+{
+  // Calculate the energy using the dihedral_energy function
+  float energy_old = dihedral_energy(dihedral_begin, dihedral_end, pos);
+
+  // Iterate over each position in the pos array
+    
+  for (int i = 0; i < 12; i++)
+  {
+    float posp[12];
+    float posm[12];
+    for(int j = 0; j<12; j++)
+      {
+        posp[j] = pos[j];
+        posm[j] = pos[j];
+      }
+    posp[i] = pos[i] + TENM3;
+    posm[i] = pos[i] - TENM3;
+    
+    float energy_new_p = dihedral_energy(dihedral_begin, dihedral_end, posp);
+    float energy_new_m = dihedral_energy(dihedral_begin, dihedral_end, posm);
+
+    // Calculate the derivative using finite differences
+    deriv[i] = (energy_new_p - energy_new_m) / (2.0*TENM3);
+  }
 }
 
 float old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float* pos, float* deriv) {
@@ -117,9 +144,12 @@ float old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float
   int I2;
   int I3;
   int I4;
+  float SinNPhi;
+  float CosNPhi;
   float result = 0.0;
   bool calcForce = true;
 #define DIHEDRAL_CALC_FORCE 1
+  float EraseLinearDihedral; 
   for ( auto dihedral = dihedral_begin; dihedral<dihedral_end; dihedral++ ) {
 #include "_Dihedral_termCode.cc"
   }
@@ -136,27 +166,52 @@ void zeroVec(float* deriv, size_t num) {
   }
 }
 int main( int argc, const char* argv[] ) {
-  float pos[12] = {0.0, 19.0, 3.0, 10.0, 7.0, 80.0,
-                   20.0, 15.0, 17.0, 25.0, 44.0, 23.0 };
+  float ANG = 20.0*0.0174533;
+  float pos[12] = {0.0, 0.0, 1.0,
+                   0.0, 0.0, 0.0,
+                   1.0, 0.0, 0.0,
+                   1.0, (float)-sin(ANG), (float)cos(ANG) };
   float deriv[12];
-  Stretch stretch[] = { {10.0, 2.0, 0, 3}, {20.0, 3.0, 6, 9} };
+  Dihedral dihedral[] = { {0.0, 1.0, 10.0, 2.0, 2, 0, 3, 6, 9 } };
   
   dump_vec("pos", pos, 12);
   float energy = 0.0;
   std::string arg1(argv[1]);
-  bool donew = (arg1 == "new");
+  int donew = 0;
+  
+  if(arg1 == "new")
+    donew = 1;
+  else if(arg1 == "fin")
+    donew = 2;
+  else
+    donew = 3;
+  
   size_t num = atoi(argv[2]);
-  if (donew) {
+  if (donew == 1)// for new
+    {
     std::cout << "New method" << "\n";
+    // energy = dihedral_energy( &dihedral[0], &dihedral[1], pos );
     for ( size_t nn = 0; nn<num; nn++ ) {
       zeroVec(deriv,12);
-      grad_dihedral_energy( &dihedral[0], &dihedral[2], pos, deriv);
+      grad_dihedral_energy( &dihedral[0], &dihedral[1], pos, deriv);
     }
-  } else {
+  }
+  
+  else if (donew == 2)// for finite diff
+      {
+        for ( size_t nn = 0; nn<num; nn++ ) {
+          zeroVec(deriv,12);
+          finite_diff_dihedral_energy(&dihedral[0], &dihedral[1], pos, deriv);
+        }   
+      }
+ 
+
+  else//for old
+   {
     std::cout << "Old method" << "\n";
     for ( size_t nn = 0; nn<num; nn++ ) {
       zeroVec(deriv,12);
-      energy = old_dihedral_energy( &dihedral[0], &dihedral[2], pos, deriv );
+      energy = old_dihedral_energy( &dihedral[0], &dihedral[1], pos, deriv );
     }
   }
   std::cout << "Energy = " << energy << "\n";
