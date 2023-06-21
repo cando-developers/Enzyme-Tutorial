@@ -7,6 +7,21 @@
 #define MIN(XXX,YYY) ((XXX<YYY)?XXX:YYY)
 #define MAX(XXX,YYY) ((XXX<YYY)?YYY:XXX)
 
+void	sinNPhiCosNPhi(int n, double* sinNPhi, double* cosNPhi,
+                       double sinPhi, double cosPhi )
+{
+  double	sinNm1Phi, cosNm1Phi;
+  if ( n==1 ) {
+    *sinNPhi = sinPhi;
+    *cosNPhi = cosPhi;
+    return;
+  };
+  sinNPhiCosNPhi(n-1,&sinNm1Phi,&cosNm1Phi,sinPhi,cosPhi);
+  *sinNPhi = cosPhi*sinNm1Phi+sinPhi*cosNm1Phi;
+  *cosNPhi = cosPhi*cosNm1Phi-sinPhi*sinNm1Phi;
+  return;
+}
+
 
 int enzyme_dup;
 int enzyme_out;
