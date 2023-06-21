@@ -100,7 +100,26 @@
 	CosPhi=MAX(-1.0,MIN(1.0,CosPhi));
 /*CosNPhi = mathCosNPhi[IN,SinPhi,CosPhi];*/
 /*SinNPhi = mathSinNPhi[IN,SinPhi,CosPhi];*/
-	sinNPhiCosNPhi(IN, &SinNPhi, &CosNPhi, SinPhi, CosPhi);
+switch(IN) {
+ case 1:
+   SinCos<1>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ case 2:
+   SinCos<2>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ case 3:
+   SinCos<3>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ case 4:
+   SinCos<4>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ case 5:
+   SinCos<5>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ case 6:
+   SinCos<6>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   break;
+ };
 	 tx135 = CosNPhi*cosPhase; 		/* rule 103 */
 	 tx136 = SinNPhi*sinPhase; 		/* rule 104 */
 	 DihedralDeviation = 1. + tx135 + tx136; 		/* rule 105 */

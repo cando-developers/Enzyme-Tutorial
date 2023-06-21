@@ -22,6 +22,26 @@ void	sinNPhiCosNPhi(int n, float* sinNPhi, float* cosNPhi,
   return;
 }
 
+template <int N>
+struct SinCos {
+  static void sinNPhiCosNPhi(double& sinNPhi, double& cosNPhi,
+                      double sinPhi, double cosPhi ) {
+    float sinNm1Phi;
+    float cosNm1Phi;
+    sinNPhiCosNPhi<N-1>(sinNm1Phi,cosNm1Phi,sinPhi,cosPhi);
+    sinNPhi = cosPhi*sinNm1Phi+sinPhi*cosNm1Phi;
+    cosNPhi = cosPhi*cosNm1Phi-sinPhi*sinNm1Phi;
+  }
+};
+
+template <>
+struct SinCos<1> {
+  static void sinNPhiCosNPhi(double& sinNPhi, double& cosNPhi,
+                      double sinPhi, double cosPhi ) {
+    sinNPhi = sinPhi;
+    cosNPhi = cosPhi;
+  }
+};
 
 int enzyme_dup;
 int enzyme_out;
