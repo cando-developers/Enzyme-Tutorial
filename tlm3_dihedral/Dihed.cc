@@ -24,11 +24,11 @@ void	sinNPhiCosNPhi(int n, float* sinNPhi, float* cosNPhi,
 
 template <int N>
 struct SinCos {
-  static void sinNPhiCosNPhi(double& sinNPhi, double& cosNPhi,
-                      double sinPhi, double cosPhi ) {
+  static void sinNPhiCosNPhi(float& sinNPhi, float& cosNPhi,
+                      float sinPhi, float cosPhi ) {
     float sinNm1Phi;
     float cosNm1Phi;
-    sinNPhiCosNPhi<N-1>(sinNm1Phi,cosNm1Phi,sinPhi,cosPhi);
+    SinCos<N-1>::sinNPhiCosNPhi(sinNm1Phi,cosNm1Phi,sinPhi,cosPhi);
     sinNPhi = cosPhi*sinNm1Phi+sinPhi*cosNm1Phi;
     cosNPhi = cosPhi*cosNm1Phi-sinPhi*sinNm1Phi;
   }
@@ -36,8 +36,8 @@ struct SinCos {
 
 template <>
 struct SinCos<1> {
-  static void sinNPhiCosNPhi(double& sinNPhi, double& cosNPhi,
-                      double sinPhi, double cosPhi ) {
+  static void sinNPhiCosNPhi(float& sinNPhi, float& cosNPhi,
+                      float sinPhi, float cosPhi ) {
     sinNPhi = sinPhi;
     cosNPhi = cosPhi;
   }
@@ -83,7 +83,7 @@ float dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* p
   float cosPhase;
   float V;
   float DN;
-  float IN;
+  int IN;
   float x1, y1, z1;
   float x2, y2, z2;
   float x3, y3, z3;
@@ -150,7 +150,7 @@ float old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float
   float cosPhase;
   float V;
   float DN;
-  float IN;
+  int IN;
   float x1, y1, z1;
   float x2, y2, z2;
   float x3, y3, z3;
