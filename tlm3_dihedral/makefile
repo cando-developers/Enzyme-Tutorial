@@ -6,7 +6,7 @@ all-Dihed: cmp-Dihed ad-Dihed opt-Dihed lower-Dihed
 	echo done
 
 cmp-Dihed:
-	clangi-15 Dihed.cc -S -emit-llvm -o Dihed-cmp.ll -O2 -fno-vectorize -fno-slp-vectorize -fno-unroll-loops
+	clang-15 Dihed.cc -S -emit-llvm -o Dihed-cmp.ll -O2 -fno-vectorize -fno-slp-vectorize -fno-unroll-loops -ftemplate-depth=20
 
 ad-Dihed:
 	opt-15 Dihed-cmp.ll -enable-new-pm=0 -load=$(ENZYME_so) --enzyme -o Dihed-ad.ll -S

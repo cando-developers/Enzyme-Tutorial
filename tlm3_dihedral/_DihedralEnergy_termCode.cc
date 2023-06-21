@@ -102,22 +102,22 @@
 /*SinNPhi = mathSinNPhi[IN,SinPhi,CosPhi];*/
 switch(IN) {
  case 1:
-   SinCos<1>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<1,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  case 2:
-   SinCos<2>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<2,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  case 3:
-   SinCos<3>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<3,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  case 4:
-   SinCos<4>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<4,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  case 5:
-   SinCos<5>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<5,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  case 6:
-   SinCos<6>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
+   SinCos<6,Real>::sinNPhiCosNPhi(SinNPhi,CosNPhi,SinPhi,CosPhi);
    break;
  };
 	 tx135 = CosNPhi*cosPhase; 		/* rule 103 */

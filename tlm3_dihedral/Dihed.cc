@@ -1,7 +1,10 @@
 #include <iostream>
+#include <iomanip>
 #include <cstdio>
 #include <string>
 #include <cmath>
+
+#define PI 3.1415926535
 
 #define TENM3 10e-3
 #define MIN(XXX,YYY) ((XXX<YYY)?XXX:YYY)
@@ -22,22 +25,31 @@ void	sinNPhiCosNPhi(int n, float* sinNPhi, float* cosNPhi,
   return;
 }
 
-template <int N>
+template <int N, typename Real>
 struct SinCos {
-  static void sinNPhiCosNPhi(float& sinNPhi, float& cosNPhi,
-                      float sinPhi, float cosPhi ) {
-    float sinNm1Phi;
-    float cosNm1Phi;
-    SinCos<N-1>::sinNPhiCosNPhi(sinNm1Phi,cosNm1Phi,sinPhi,cosPhi);
+  static void sinNPhiCosNPhi(Real& sinNPhi, Real& cosNPhi,
+                      Real sinPhi, Real cosPhi ) {
+    Real sinNm1Phi;
+    Real cosNm1Phi;
+    SinCos<N-1,Real>::sinNPhiCosNPhi(sinNm1Phi,cosNm1Phi,sinPhi,cosPhi);
     sinNPhi = cosPhi*sinNm1Phi+sinPhi*cosNm1Phi;
     cosNPhi = cosPhi*cosNm1Phi-sinPhi*sinNm1Phi;
   }
 };
 
 template <>
-struct SinCos<1> {
+struct SinCos<1,float> {
   static void sinNPhiCosNPhi(float& sinNPhi, float& cosNPhi,
                       float sinPhi, float cosPhi ) {
+    sinNPhi = sinPhi;
+    cosNPhi = cosPhi;
+  }
+};
+
+template <>
+struct SinCos<1,double> {
+  static void sinNPhiCosNPhi(double& sinNPhi, double& cosNPhi,
+                      double sinPhi, double cosPhi ) {
     sinNPhi = sinPhi;
     cosNPhi = cosPhi;
   }
@@ -64,9 +76,9 @@ struct Dihedral {
  extern double __enzyme_autodiff(void*, ...);
 
 void  dump_vec(const std::string& msg, float* deriv, size_t num) {
-  std::cout << msg << " ";
+  std::cout << std::setw(10) << msg << " ";
   for ( int i=0; i<num; i++ ) {
-    std::cout << deriv[i] << " ";
+    std::cout << std::setprecision(4) << std::fixed << std::setw(8) << deriv[i] << " ";
   }
   std::cout << "\n";
 }
@@ -75,19 +87,20 @@ void  dump_vec(const std::string& msg, float* deriv, size_t num) {
 #define mysqrt(VAR) (std::sqrt(VAR))
 #define reciprocal(VAR) (1.0/VAR)
 
+template <typename Real>
 float dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* pos) {
 #define USE_EXPLICIT_DECLARES 1
-#define DECLARE_FLOAT(VAR) float VAR;
-  float EraseLinearDihedral;
-  float sinPhase;
-  float cosPhase;
-  float V;
-  float DN;
+#define DECLARE_FLOAT(VAR) Real VAR;
+  Real EraseLinearDihedral;
+  Real sinPhase;
+  Real cosPhase;
+  Real V;
+  Real DN;
   int IN;
-  float x1, y1, z1;
-  float x2, y2, z2;
-  float x3, y3, z3;
-  float x4, y4, z4;
+  Real x1, y1, z1;
+  Real x2, y2, z2;
+  Real x3, y3, z3;
+  Real x4, y4, z4;
 #include "_DihedralEnergy_termDeclares.cc"
 #define DIHEDRAL_SET_PARAMETER(VAR) { VAR = dihedral->VAR; }
 #define DIHEDRAL_SET_POSITION(VAR,IDX,OFFSET) { VAR = pos[IDX+OFFSET]; }
@@ -96,9 +109,9 @@ float dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* p
   int I2;
   int I3;
   int I4;
-  float result = 0.0;
-  float SinNPhi;
-  float CosNPhi;
+  Real result = 0.0;
+  Real SinNPhi;
+  Real CosNPhi;
   for ( auto dihedral = dihedral_begin; dihedral < dihedral_end; dihedral++ ) {
 #include "_DihedralEnergy_termCode.cc"
   }
@@ -109,8 +122,9 @@ float dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* p
   return result;
 }
 
+template <typename Real>
 void grad_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* pos, float* deriv ) {
-  __enzyme_autodiff( (void*)dihedral_energy,
+  __enzyme_autodiff( (void*)dihedral_energy<Real>,
                      enzyme_const, dihedral_begin,
                      enzyme_const, dihedral_end,
                      enzyme_dup, pos, deriv );
@@ -119,7 +133,7 @@ void grad_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, floa
 void finite_diff_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_end, float* pos, float* deriv)
 {
   // Calculate the energy using the dihedral_energy function
-  float energy_old = dihedral_energy(dihedral_begin, dihedral_end, pos);
+  float energy_old = dihedral_energy<float>(dihedral_begin, dihedral_end, pos);
 
   // Iterate over each position in the pos array
     
@@ -135,26 +149,27 @@ void finite_diff_dihedral_energy(Dihedral* dihedral_begin, Dihedral* dihedral_en
     posp[i] = pos[i] + TENM3;
     posm[i] = pos[i] - TENM3;
     
-    float energy_new_p = dihedral_energy(dihedral_begin, dihedral_end, posp);
-    float energy_new_m = dihedral_energy(dihedral_begin, dihedral_end, posm);
+    float energy_new_p = dihedral_energy<float>(dihedral_begin, dihedral_end, posp);
+    float energy_new_m = dihedral_energy<float>(dihedral_begin, dihedral_end, posm);
 
     // Calculate the derivative using finite differences
     deriv[i] = (energy_new_p - energy_new_m) / (2.0*TENM3);
   }
 }
 
-float old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float* pos, float* deriv) {
+template <typename Real>
+Real old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float* pos, float* deriv) {
 #define USE_EXPLICIT_DECLARES 1
-#define DECLARE_FLOAT(VAR) float VAR;
-  float sinPhase;
-  float cosPhase;
-  float V;
-  float DN;
+#define DECLARE_FLOAT(VAR) Real VAR;
+  Real sinPhase;
+  Real cosPhase;
+  Real V;
+  Real DN;
   int IN;
-  float x1, y1, z1;
-  float x2, y2, z2;
-  float x3, y3, z3;
-  float x4, y4, z4;
+  Real x1, y1, z1;
+  Real x2, y2, z2;
+  Real x3, y3, z3;
+  Real x4, y4, z4;
 #include "_Dihedral_termDeclares.cc"
 #define DIHEDRAL_SET_PARAMETER(VAR) { VAR = dihedral->VAR; }
 #define DIHEDRAL_SET_POSITION(VAR,IDX,OFFSET) { VAR = pos[IDX+OFFSET]; }
@@ -164,12 +179,12 @@ float old_dihedral_energy(Dihedral* dihedral_begin, Dihedral*dihedral_end, float
   int I2;
   int I3;
   int I4;
-  float SinNPhi;
-  float CosNPhi;
-  float result = 0.0;
+  Real SinNPhi;
+  Real CosNPhi;
+  Real result = 0.0;
   bool calcForce = true;
 #define DIHEDRAL_CALC_FORCE 1
-  float EraseLinearDihedral; 
+  Real EraseLinearDihedral; 
   for ( auto dihedral = dihedral_begin; dihedral<dihedral_end; dihedral++ ) {
 #include "_Dihedral_termCode.cc"
   }
@@ -185,56 +200,69 @@ void zeroVec(float* deriv, size_t num) {
     deriv[i] = 0.0;
   }
 }
+void copyVec(float* result, float* val, size_t num) {
+  for (int i=0; i<num; i++ ) {
+    result[i] = val[i];
+  }
+}
+
+
 int main( int argc, const char* argv[] ) {
   float ANG = 20.0*0.0174533;
   float pos[12] = {0.0, 0.0, 1.0,
-                   0.0, 0.0, 0.0,
-                   1.0, 0.0, 0.0,
-                   1.0, (float)-sin(ANG), (float)cos(ANG) };
+                      0.0, 0.0, 0.0,
+                      1.0, 0.0, 0.0,
+                      1.0, (float)-sin(ANG), (float)cos(ANG) };
   float deriv[12];
   Dihedral dihedral[] = { {0.0, 1.0, 10.0, 2.0, 2, 0, 3, 6, 9 } };
   
   dump_vec("pos", pos, 12);
   float energy = 0.0;
   std::string arg1(argv[1]);
-  int donew = 0;
-  
-  if(arg1 == "new")
-    donew = 1;
-  else if(arg1 == "fin")
-    donew = 2;
-  else
-    donew = 3;
   
   size_t num = atoi(argv[2]);
-  if (donew == 1)// for new
-    {
+  if (arg1 == "new-float") {
     std::cout << "New method" << "\n";
     // energy = dihedral_energy( &dihedral[0], &dihedral[1], pos );
     for ( size_t nn = 0; nn<num; nn++ ) {
       zeroVec(deriv,12);
-      grad_dihedral_energy( &dihedral[0], &dihedral[1], pos, deriv);
+      grad_dihedral_energy<float>( &dihedral[0], &dihedral[1], pos, deriv);
     }
-  }
-  
-  else if (donew == 2)// for finite diff
-      {
-        for ( size_t nn = 0; nn<num; nn++ ) {
-          zeroVec(deriv,12);
-          finite_diff_dihedral_energy(&dihedral[0], &dihedral[1], pos, deriv);
-        }   
-      }
- 
-
-  else//for old
-   {
-    std::cout << "Old method" << "\n";
+  } else if (arg1 == "new-double") {
+    std::cout << "New method" << "\n";
+    // energy = dihedral_energy( &dihedral[0], &dihedral[1], pos );
     for ( size_t nn = 0; nn<num; nn++ ) {
       zeroVec(deriv,12);
-      energy = old_dihedral_energy( &dihedral[0], &dihedral[1], pos, deriv );
+      grad_dihedral_energy<double>( &dihedral[0], &dihedral[1], pos, deriv);
     }
+  } else if ( arg1 == "fin") {
+      for ( size_t nn = 0; nn<num; nn++ ) {
+        zeroVec(deriv,12);
+        finite_diff_dihedral_energy(&dihedral[0], &dihedral[1], pos, deriv);
+      }
+  } else if (arg1 == "old-float") {
+    float fenergy;
+    float fderiv[12];
+    float fpos[12];
+    copyVec(fpos,pos,12);
+    std::cout << "Old method" << "\n";
+    for ( size_t nn = 0; nn<num; nn++ ) {
+      zeroVec(fderiv,12);
+      energy = old_dihedral_energy<float>( &dihedral[0], &dihedral[1], fpos, fderiv );
+    }
+    std::cout << "Energy = " << fenergy << "\n";
+    dump_vec("deriv", fderiv, 12);
+  } else if (arg1 == "old-double") {
+    float fenergy;
+    float fderiv[12];
+    float fpos[12];
+    copyVec(fpos,pos,12);
+    std::cout << "Old method" << "\n";
+    for ( size_t nn = 0; nn<num; nn++ ) {
+      zeroVec(fderiv,12);
+      energy = old_dihedral_energy<double>( &dihedral[0], &dihedral[1], fpos, fderiv );
+    }
+    std::cout << "Energy = " << fenergy << "\n";
+    dump_vec("deriv", fderiv, 12);
   }
-  std::cout << "Energy = " << energy << "\n";
-  dump_vec("deriv", deriv, 12);
-
 }
