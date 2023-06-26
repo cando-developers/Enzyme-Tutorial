@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <string>
 #include <cmath>
-
+#include <immintrin.h> // Include SIMD intrinsics header
 int enzyme_dup;
 int enzyme_out;
 int enzyme_const;
@@ -79,7 +79,7 @@ float old_stretch_energy(Stretch* stretch_begin, Stretch* stretch_end, float* po
   bool calcForce = true;
 #define STRETCH_CALC_FORCE 1
   for ( auto stretch = stretch_begin; stretch<stretch_end; stretch++ ) {
-#include "_Stretch_termCode.cc"
+#include "_Stretch_termCode .cc"
   }
 #undef DECLARE_FLOAT
 #undef STRETCH_SET_PARAMETER
@@ -94,11 +94,10 @@ void zeroVec(float* deriv, size_t num) {
   }
 }
 int main( int argc, const char* argv[] ) {
-  float pos[12] = {0.0, 19.0, 3.0, 10.0, 7.0, 80.0,
-                   20.0, 15.0, 17.0, 25.0, 44.0, 23.0 };
+  float pos[12] = {0.0, 19.0,3.0, 10.0, 7.0, 80.0,
+                   20.0, 15.0,17.0, 25.0, 44.0, 23.0 };
   float deriv[12];
   Stretch stretch[] = { {10.0, 2.0, 0, 3}, {20.0, 3.0, 6, 9} };
-  
   dump_vec("pos", pos, 12);
   float energy = 0.0;
   std::string arg1(argv[1]);
@@ -122,3 +121,4 @@ int main( int argc, const char* argv[] ) {
   dump_vec("deriv", deriv, 12);
 
 }
+

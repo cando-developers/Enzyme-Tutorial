@@ -23,7 +23,7 @@
 	 tx88 = power2(tx85); 		/* rule 22 */
 	 tx89 = power2(tx86); 		/* rule 23 */
 	 DistanceSquared = tx87 + tx88 + tx89; 		/* rule 24 */
-	BAIL_OUT_IF_CUTOFF(DistanceSquared)
+BAIL_OUT_IF_CUTOFF(DistanceSquared);
 	 tx192 = reciprocal(DistanceSquared); 		/* rule 26 */
 	 tx171 = power2(tx192); 		/* rule 27 */
 	 tx172 = tx192; 		/* rule 28 */

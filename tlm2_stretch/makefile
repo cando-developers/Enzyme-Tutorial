@@ -1,6 +1,5 @@
-
 ENZYME_so=../../Enzyme/enzyme/build/Enzyme/LLVMEnzyme-15.so
-
+#ENZYME_so=/home/bike/src/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-15.so
 all-stretch: cmp-stretch ad-stretch opt-stretch lower-stretch
 	echo done
 

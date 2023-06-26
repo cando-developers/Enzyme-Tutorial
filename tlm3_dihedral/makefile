@@ -1,5 +1,6 @@
 
-ENZYME_so=../../Enzyme/enzyme/build/Enzyme/LLVMEnzyme-15.so
+#ENZYME_so=../../Enzyme/enzyme/build/Enzyme/LLVMEnzyme-15.so
+ENZYME_so=/home/bike/src/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-15.so
 
 all-Dihed: cmp-Dihed ad-Dihed opt-Dihed lower-Dihed
 	echo done
