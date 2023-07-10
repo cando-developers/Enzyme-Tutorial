@@ -47,18 +47,61 @@ float energy(int natoms, float coords[], float charges[],
   return energy_vdw + energy_electrostatic;
 }
 
-int main() {
-  float pos[12] = {0.0, 19.0,3.0, 10.0, 7.0, 80.0,
-                   20.0, 15.0,17.0, 25.0, 44.0, 23.0 };
-  float charge[4] = {0.85, 0.95, 1.05, 1.15};
-  int types[4] = {0, 1, 1, 0};
-  float cn1[2] = {0.5, 0.7};
-  float cn2[2] = {0.3, 0.6};
-  int nexcluded[4] = {1, 1, 1, 1};
-  // just exclude self-interactions.
-  int excluded_indices[4] = {0, 1, 2, 3};
+const size_t NATOMS = 8*8 + 1;
+const float MAXCOORD = 100.0;
+const float MAXCHARGE = 2.0;
 
-  float tenergy = energy(4, pos, charge, 2, types, cn1, cn2,
+void initialize_positions(float pos[]) {
+  for (size_t n = 0; n < NATOMS*3; ++n)
+    pos[n] = MAXCOORD * (float)rand()/(float)RAND_MAX;
+}
+
+void initialize_charges(float charges[]) {
+  for (size_t n = 0; n < NATOMS; ++n)
+    // Try to spread on both sides of zero.
+    charges[n] = MAXCHARGE * (float)rand()/(float)RAND_MAX - MAXCHARGE/2;
+}
+
+void initialize_types(int types[]) {
+  for (size_t n = 0; n < NATOMS; ++n)
+    types[n] = rand() % 2;
+}
+
+void initialize_exclusions(int nexcluded[], int excluded_indices[]) {
+  // nonrandom: just exclude each atom from its next.
+  size_t excluded_atom_index = 0;
+  for (size_t n = 0; n < NATOMS; ++n) {
+    nexcluded[n] = 1;
+    excluded_indices[excluded_atom_index++] = (n+1) % NATOMS;
+  }
+}
+
+void display_atoms(float pos[], float charge[], int types[]) {
+  for (size_t n = 0; n < NATOMS; ++n) {
+    std::cout << "Atom #" << n << ": ";
+    std::cout << "Type " << types[n] << " @ ";
+    std::cout << "(" << pos[3*n+0] << "," << pos[3*n+1] << "," << pos[3*n+2] << ") ";
+    std::cout << "Charge " << charge[n] << std::endl;
+  }
+}
+
+int main() {
+  float pos[NATOMS*3];
+  float charge[NATOMS];
+  int types[NATOMS];
+  float cn1[4] = {0.05, 0.07, 0.07, 0.08};
+  float cn2[4] = {0.01, 0.03, 0.03, 0.04};
+  int nexcluded[NATOMS];
+  int excluded_indices[NATOMS];
+
+  initialize_positions(pos);
+  initialize_charges(charge);
+  initialize_types(types);
+  initialize_exclusions(nexcluded, excluded_indices);
+
+  //display_atoms(pos, charge, types);
+
+  float tenergy = energy(NATOMS, pos, charge, 2, types, cn1, cn2,
                          nexcluded, excluded_indices);
   std::cout << "Energy: " << tenergy << std::endl;
   return 0;
